@@ -1,80 +1,116 @@
-﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
 using System.Data.SqlClient;
 
-// For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-
-namespace RestfulAPISE.Controllers
+namespace RESTFUL
 {
-    [Route("api/[controller]")]
-    [ApiController]
-    public class EmpController : ControllerBase
+    public class EmpController : Controller
     {
-        // GET: api/<EmpController>
-        [HttpGet]
-        public IEnumerable<string> Get()
+
+        // GET: EmpController
+        public ActionResult Index()
         {
-            return new string[] { "value1", "value2" };
+            return View();
         }
 
-        //// GET api/<EmpController>/5
-        //[HttpGet("{id}")]
-        //public string Get(int id)
-        //{
-        //    return "value";
-        //}
+        // GET: EmpController/Details/5
+        public ActionResult Details(int id)
+        {
+            return View();
+        }
 
-        //// POST api/<EmpController>
-        //[HttpPost]
-        //public void Post([FromBody] string value)
-        //{
-        //}
+        // GET: EmpController/Create
+        public ActionResult Create()
+        {
+            return View();
+        }
 
-        //// PUT api/<EmpController>/5
-        //[HttpPut("{id}")]
-        //public void Put(int id, [FromBody] string value)
-        //{
-        //}
+        // POST: EmpController/Create
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult Create(IFormCollection collection)
+        {
+            try
+            {
+                return RedirectToAction(nameof(Index));
+            }
+            catch
+            {
+                return View();
+            }
+        }
 
-        //// DELETE api/<EmpController>/5
-        //[HttpDelete("{id}")]
-        //public void Delete(int id)
-        //{
-        //}
+        // GET: EmpController/Edit/5
+        public ActionResult Edit(int id)
+        {
+            return View();
+        }
 
-        // GET api/<EmpController>/5
-        [HttpGet("{id}")]
-        public List<string> GetEmpById(string id)
+        // POST: EmpController/Edit/5
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult Edit(int id, IFormCollection collection)
+        {
+            try
+            {
+                return RedirectToAction(nameof(Index));
+            }
+            catch
+            {
+                return View();
+            }
+        }
+
+        // GET: EmpController/Delete/5
+        public ActionResult Delete(int id)
+        {
+            return View();
+        }
+
+        // POST: EmpController/Delete/5
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult Delete(int id, IFormCollection collection)
+        {
+            try
+            {
+                return RedirectToAction(nameof(Index));
+            }
+            catch
+            {
+                return View();
+            }
+        }
+
+        // GET: EmpController
+        [HttpGet("{EmployeeNationalIDAlternateKey}")]
+        public List<String> GetEmployeeById(String EmployeeNationalIDAlternateKey)
         {
             List<string> employees = new List<string>();
-            string connectionString = "Data Source=YOUSSEFSENOUSY;Initial Catalog=AdventureWorks2016;User ID=sa;Password=P@ssw0rd; Integrated Security=true";
+            string connectionString = "Data Source=DESKTOP-10ST34L\\SQLEXPRESS;Initial Catalog=Adventure works;User ID=sa;Password=P@$$w0rd;Integrated Security=true";
             using (SqlConnection connection = new SqlConnection(connectionString))
             {
                 connection.Open();
-                SqlCommand command = new SqlCommand("SELECT BusinessEntityID, NationalIDNumber, OrganizationLevel, JobTitle, BirthDate," +
-                    " MaritalStatus, Gender, HireDate, ModifiedDate FROM  HumanResources.Employee WHERE(NationalIDNumber = '" + id + "')", connection);
+                SqlCommand command = new SqlCommand("SELECT FirstName ,LastName,Title, BirthDate, MaritalStatus, Gender\r\n " +
+                    "FROM dbo.DimEmployee  WHERE EmployeeNationalIDAlternateKey = N'" + EmployeeNationalIDAlternateKey + "')", connection);
                 SqlDataReader reader = command.ExecuteReader();
                 while (reader.Read())
                 {
-                    string NationalIDNo = reader["NationalIDNumber"].ToString();
-                    string OrganizationLevel = reader["OrganizationLevel"].ToString();
-                    string JobTitle = reader["JobTitle"].ToString();
+                    string NationalIDNo = reader["EmployeeNationalIDAlternateKey"].ToString();
+                    string Title = reader["Title"].ToString();
                     string BirthDate = reader["BirthDate"].ToString();
                     string MaritalStatus = reader["MaritalStatus"].ToString();
                     string Gender = reader["Gender"].ToString();
-                    string HireDate = reader["HireDate"].ToString();
-                    string ModifiedDate = reader["ModifiedDate"].ToString();
+
                     employees.Add(NationalIDNo);
-                    employees.Add(OrganizationLevel);
-                    employees.Add(JobTitle);
+                    employees.Add(Title);
                     employees.Add(BirthDate);
                     employees.Add(MaritalStatus);
                     employees.Add(Gender);
-                    employees.Add(HireDate);
-                    employees.Add(ModifiedDate);
-                }
-            }
-            return employees;
-        }
 
+                }
+                return employees;
+            }
+        }
     }
 }
